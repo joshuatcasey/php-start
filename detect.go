@@ -1,7 +1,11 @@
 package phpstart
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/fs"
 )
 
 // BuildPlanMetadata is the buildpack specific data included in build plan
@@ -68,6 +72,23 @@ func Detect() packit.DetectFunc {
 		}
 
 		httpdFpmPlan.Requires = append(baseRequirements, httpdFpmPlan.Requires...)
+
+		composerJsonPath := filepath.Join(context.WorkingDir, "composer.json")
+
+		if value, found := os.LookupEnv("COMPOSER"); found {
+			composerJsonPath = filepath.Join(context.WorkingDir, value)
+		}
+
+		if exists, err := fs.Exists(composerJsonPath); err != nil {
+			return packit.DetectResult{}, err
+		} else if exists {
+			httpdFpmPlan.Requires = append(httpdFpmPlan.Requires, packit.BuildPlanRequirement{
+				Name: "composer-packages",
+				Metadata: BuildPlanMetadata{
+					Build: true,
+				},
+			})
+		}
 
 		// Eventually we can create a slice of plans that are Or'd together for
 		// HTTPD, Nginx, and the FPM included cases.

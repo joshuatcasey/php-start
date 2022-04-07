@@ -6,17 +6,23 @@ for PHP apps.
 
 ## Behavior
 
-This buildpack will always participate if it's `requirements` are met. In the
+This buildpack will always participate if its `requirements` are met. In the
 HTTPD server case `requires` `php`, `php-fpm` optionally, `httpd`, and
 `httpd-config`. In the Nginx case, it will require `nginx` and `nginx-config`
-instead of `httpd` and `httpd-config`. These requirements will be met when used
-in conjunction with the other buildpacks in the Paketo PHP language family.
+instead of `httpd` and `httpd-config`.
 
-| Requirement        | Build | Launch |
-|--------------------|-------|--------|
-| `php`              | x     |        |
-| `php-fpm`          | x     | x      |
-| `httpd` or `nginx` | x     |        |
+In either the HTTPD server or Nginx case, this buildpack will require
+`composer-packages` when a `composer.json` file is available.
+
+These requirements will be met when used in conjunction with the other
+buildpacks in the Paketo PHP language family.
+
+| Requirement                      | Build | Launch |
+|----------------------------------|-------|--------|
+| `php`                            | x     |        |
+| `composer-packages`              |       | x      |
+| `php-fpm`                        | x     | x      |
+| `httpd` or `nginx`               | x     |        |
 | `httpd-config` or `nginx-config` | x     | x      |
 
 
